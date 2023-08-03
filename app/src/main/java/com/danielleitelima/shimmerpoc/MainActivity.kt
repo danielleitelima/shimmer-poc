@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.danielleitelima.shimmerpoc.databinding.ActivityMainBinding
+import com.danielleitelima.shimmerpoc.databinding.ItemStoryBinding
 import com.faltenreich.skeletonlayout.createSkeleton
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -21,6 +22,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(view)
 
         val contentSkeleton = binding.content.createSkeleton()
+
+        binding.stories.adapter = createAdapter()
 
         binding.btnNext.setOnClickListener {
             lifecycleScope.launch {
@@ -39,6 +42,15 @@ class MainActivity : AppCompatActivity() {
                 binding.btnText.isVisible = true
                 binding.progressCircular.isVisible = false
             }
+        }
+    }
+
+    private fun createAdapter() = SingleTypeGenericAdapter(
+        ItemStoryBinding::inflate,
+        listOf("One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten")
+    ) { item, binding ->
+        binding.apply {
+            binding.content.text = item
         }
     }
 }
