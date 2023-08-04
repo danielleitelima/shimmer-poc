@@ -8,7 +8,6 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.danielleitelima.shimmerpoc.databinding.ActivityMainBinding
 import com.danielleitelima.shimmerpoc.databinding.ItemStoryBinding
-import com.faltenreich.skeletonlayout.createSkeleton
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -21,28 +20,39 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        val contentSkeleton = binding.content.createSkeleton()
-
         binding.stories.adapter = createAdapter()
+
+//        TODO: Handle skeleton state
+        binding.stories.isVisible = false
+
+        val maskableViews = listOf(
+            binding.tvHeadline,
+            binding.tvFooter,
+            binding.tvArticleBody,
+            binding.tvTitle,
+        )
 
         binding.btnNext.setOnClickListener {
             lifecycleScope.launch {
-                // Simulate long running task
-                binding.btnText.isVisible = false
-                binding.progressCircular.isVisible = true
-                binding.btnNext.isEnabled = false
-                val lightGrayColor = ContextCompat.getColor(this@MainActivity, R.color.light_gray) // Replace 'your_color' with your color resource name
-                val blackColor = ContextCompat.getColor(this@MainActivity, R.color.black) // Replace 'your_color' with your color resource name
-                binding.btnNext.setCardBackgroundColor(ColorStateList.valueOf(lightGrayColor))
-                contentSkeleton.showSkeleton()
+                maskableViews.forEach { it.mask() }
+                setButtonState(true)
                 delay(3000)
-                binding.btnNext.setCardBackgroundColor(ColorStateList.valueOf(blackColor))
-                binding.btnNext.isEnabled = true
-                contentSkeleton.showOriginal()
-                binding.btnText.isVisible = true
-                binding.progressCircular.isVisible = false
+                setButtonState(false)
+                maskableViews.forEach { it.unmask() }
             }
         }
+
+    }
+
+    private fun setButtonState(isLoading: Boolean) {
+        val lightGrayColor = ContextCompat.getColor(this@MainActivity, R.color.light_gray) // Replace 'your_color' with your color resource name
+        val blackColor = ContextCompat.getColor(this@MainActivity, R.color.black) // Replace 'your_color' with your color resource name
+
+        binding.btnNext.isEnabled = !isLoading
+        binding.btnText.isVisible = !isLoading
+        binding.progressCircular.isVisible = isLoading
+
+        binding.btnNext.setCardBackgroundColor(ColorStateList.valueOf(if (isLoading) lightGrayColor else blackColor))
     }
 
     private fun createAdapter() = SingleTypeGenericAdapter(

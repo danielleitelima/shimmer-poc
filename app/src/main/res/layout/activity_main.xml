@@ -17,7 +17,7 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <!-- Newspaper Header/Title -->
-        <TextView
+        <com.danielleitelima.shimmerpoc.MaskableTextView
             android:id="@+id/tv_title"
             android:layout_marginHorizontal="16dp"
             android:layout_width="0dp"
@@ -32,7 +32,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <!-- News Article Headline -->
-        <TextView
+        <com.danielleitelima.shimmerpoc.MaskableTextView
             android:layout_marginTop="32dp"
             android:layout_marginHorizontal="16dp"
             android:id="@+id/tv_headline"
@@ -46,7 +46,7 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_title" />
 
         <!-- News Article Body -->
-        <TextView
+        <com.danielleitelima.shimmerpoc.MaskableTextView
             android:layout_marginTop="16dp"
             android:layout_marginHorizontal="16dp"
             android:id="@+id/tv_article_body"
@@ -59,7 +59,7 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_headline" />
 
         <!-- News Article Footer -->
-        <TextView
+        <com.danielleitelima.shimmerpoc.MaskableTextView
             android:layout_marginTop="16dp"
             android:layout_marginHorizontal="16dp"
             android:id="@+id/tv_footer"
