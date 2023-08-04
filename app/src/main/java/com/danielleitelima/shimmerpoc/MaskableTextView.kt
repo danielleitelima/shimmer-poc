@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat
 import kotlin.math.cos
 import kotlin.math.sin
 
-class MaskableTextView(context: Context, attrs: AttributeSet) : AppCompatTextView(context, attrs) {
+class MaskableTextView(context: Context, attrs: AttributeSet) : AppCompatTextView(context, attrs), Maskable {
     private var isMasked: Boolean = false
     private val paint: Paint = Paint()
     private var shimmerColor: Int = ContextCompat.getColor(context, R.color.skeleton_mask)
@@ -52,7 +52,7 @@ class MaskableTextView(context: Context, attrs: AttributeSet) : AppCompatTextVie
         }
     }
 
-    fun mask() {
+    override fun mask() {
         isMasked = true
         if (animator != null) {
             animator!!.cancel()
@@ -70,7 +70,7 @@ class MaskableTextView(context: Context, attrs: AttributeSet) : AppCompatTextVie
         }
     }
 
-    fun unmask() {
+    override fun unmask() {
         isMasked = false
         animator?.cancel()
         animator = null
