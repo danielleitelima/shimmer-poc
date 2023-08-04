@@ -2,6 +2,7 @@ package com.danielleitelima.shimmerpoc
 
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -25,20 +26,13 @@ class MainActivity : AppCompatActivity() {
 //        TODO: Handle skeleton state
         binding.stories.isVisible = false
 
-        val maskableViews = listOf(
-            binding.tvHeadline,
-            binding.tvFooter,
-            binding.tvArticleBody,
-            binding.tvTitle,
-        )
-
         binding.btnNext.setOnClickListener {
             lifecycleScope.launch {
-                maskableViews.forEach { it.mask() }
+                binding.root.mask()
                 setButtonState(true)
                 delay(3000)
                 setButtonState(false)
-                maskableViews.forEach { it.unmask() }
+                binding.root.unmask()
             }
         }
 
@@ -53,6 +47,27 @@ class MainActivity : AppCompatActivity() {
         binding.progressCircular.isVisible = isLoading
 
         binding.btnNext.setCardBackgroundColor(ColorStateList.valueOf(if (isLoading) lightGrayColor else blackColor))
+    }
+
+    fun ViewGroup.mask() {
+        for (i in 0 until childCount) {
+            val child = getChildAt(i)
+            when (child) {
+                is MaskableTextView -> child.mask()
+                is ViewGroup -> child.mask()
+            }
+        }
+    }
+
+    // Extension function to get all MaskableTextView recursively and unmask them
+    fun ViewGroup.unmask() {
+        for (i in 0 until childCount) {
+            val child = getChildAt(i)
+            when (child) {
+                is MaskableTextView -> child.unmask()
+                is ViewGroup -> child.unmask()
+            }
+        }
     }
 
     private fun createAdapter() = SingleTypeGenericAdapter(
