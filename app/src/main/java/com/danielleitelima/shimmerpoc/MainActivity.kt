@@ -3,12 +3,14 @@ package com.danielleitelima.shimmerpoc
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.danielleitelima.shimmerpoc.databinding.ActivityMainBinding
 import com.danielleitelima.shimmerpoc.databinding.ItemStoryBinding
+import com.github.javafaker.Faker
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -20,6 +22,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+        setTextContent()
 
         binding.stories.adapter = createAdapter()
 
@@ -29,13 +32,21 @@ class MainActivity : AppCompatActivity() {
         binding.btnNext.setOnClickListener {
             lifecycleScope.launch {
                 binding.root.mask()
-                setButtonState(true)
+                setButtonState(isLoading = true)
                 delay(3000)
-                setButtonState(false)
+                setTextContent()
+                setButtonState(isLoading = false)
                 binding.root.unmask()
             }
         }
 
+    }
+
+    private fun setTextContent() {
+        binding.tvTitle.setRandomLoremIpsum(10,50)
+        binding.tvHeadline.setRandomLoremIpsum(40, 80)
+        binding.tvArticleBody.setRandomLoremIpsum(300, 500)
+        binding.tvFooter.setRandomLoremIpsum(50,100)
     }
 
     private fun setButtonState(isLoading: Boolean) {
@@ -67,6 +78,13 @@ class MainActivity : AppCompatActivity() {
                 is ViewGroup -> child.unmask()
             }
         }
+    }
+
+    fun TextView.setRandomLoremIpsum(minimumLength: Int = 20, maximumLength: Int = 200) {
+        val faker = Faker()
+        val textLength = (minimumLength..maximumLength).random()
+        val lorem = faker.lorem().fixedString(textLength)
+        this.text = lorem
     }
 
     private fun createAdapter() = SingleTypeGenericAdapter(

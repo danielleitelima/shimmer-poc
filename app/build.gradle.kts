@@ -49,6 +49,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
     implementation("com.faltenreich:skeletonlayout:4.0.0")
     implementation("com.facebook.shimmer:shimmer:0.5.0")
+    implementation("com.github.javafaker:javafaker:1.0.2")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
