@@ -9,15 +9,12 @@ import android.graphics.Shader
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
-import kotlin.math.cos
-import kotlin.math.sin
 
 class MaskableTextView(context: Context, attrs: AttributeSet) : AppCompatTextView(context, attrs), Maskable {
     private var isMasked: Boolean = false
     private val paint: Paint = Paint()
     private var shimmerColor: Int = ContextCompat.getColor(context, R.color.skeleton_mask)
     private var color: Int = ContextCompat.getColor(context, R.color.skeleton_shimmer)
-    private var shimmerAngle: Int = 45
     private var animationFactor: Float = 0.0f
     private var shimmerGradient: LinearGradient? = null
     private var maskAnimator: ValueAnimator? = null
@@ -29,17 +26,17 @@ class MaskableTextView(context: Context, attrs: AttributeSet) : AppCompatTextVie
     }
 
     private fun updateGradient() {
-        val radians = Math.toRadians(shimmerAngle.toDouble())
         shimmerGradient = LinearGradient(
             animationFactor,
-            animationFactor,
-            cos(radians.toFloat()) * width,
-            sin(radians.toFloat()) * width,
+            0f,
+            animationFactor + width,
+            0f,
             intArrayOf(color, shimmerColor, color),
             null,
             Shader.TileMode.CLAMP
         )
     }
+
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
