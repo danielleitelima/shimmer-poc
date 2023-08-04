@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setButtonState(isLoading: Boolean) {
-        val lightGrayColor = ContextCompat.getColor(this@MainActivity, R.color.light_gray) // Replace 'your_color' with your color resource name
+        val lightGrayColor = ContextCompat.getColor(this@MainActivity, R.color.skeleton_mask) // Replace 'your_color' with your color resource name
         val blackColor = ContextCompat.getColor(this@MainActivity, R.color.black) // Replace 'your_color' with your color resource name
 
         binding.btnNext.isEnabled = !isLoading

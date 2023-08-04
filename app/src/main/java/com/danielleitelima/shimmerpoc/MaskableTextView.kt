@@ -19,8 +19,9 @@ class MaskableTextView(context: Context, attrs: AttributeSet) : AppCompatTextVie
     private var color: Int = ContextCompat.getColor(context, R.color.skeleton_shimmer)
     private var shimmerAngle: Int = 45
     private var animationFactor: Float = 0.0f
-    private var animator: ValueAnimator? = null
     private var shimmerGradient: LinearGradient? = null
+    private var maskAnimator: ValueAnimator? = null
+    private var fadeAnimator: ValueAnimator? = null
 
     init {
         paint.isAntiAlias = true // Adding anti-aliasing
@@ -29,15 +30,13 @@ class MaskableTextView(context: Context, attrs: AttributeSet) : AppCompatTextVie
 
     private fun updateGradient() {
         val radians = Math.toRadians(shimmerAngle.toDouble())
-        val endX = cos(radians.toFloat()) * width + animationFactor
-        val endY = sin(radians.toFloat()) * height + animationFactor
         shimmerGradient = LinearGradient(
             animationFactor,
             animationFactor,
-            endX,
-            endY,
+            cos(radians.toFloat()) * width,
+            sin(radians.toFloat()) * width,
             intArrayOf(color, shimmerColor, color),
-            floatArrayOf(0.1f, 0.2f, 0.1f),
+            null,
             Shader.TileMode.CLAMP
         )
     }
@@ -54,33 +53,54 @@ class MaskableTextView(context: Context, attrs: AttributeSet) : AppCompatTextVie
 
     override fun mask() {
         isMasked = true
-        if (animator != null) {
-            animator!!.cancel()
+        if (maskAnimator != null) {
+            maskAnimator!!.cancel()
         }
-        animator = ValueAnimator.ofFloat(-width.toFloat(), width.toFloat()).apply {
+        maskAnimator = ValueAnimator.ofFloat(-width.toFloat(), width.toFloat()).apply {
             duration = 2000 // Modify this for controlling the speed. 3000ms = 3 seconds
-            repeatMode = ValueAnimator.RESTART
+            repeatMode = ValueAnimator.REVERSE
             repeatCount = ValueAnimator.INFINITE
             addUpdateListener { animation ->
                 animationFactor = animation.animatedValue as Float
                 updateGradient()
                 invalidate()
             }
+        }
+
+        fadeAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
+            duration = 300
+            addUpdateListener { animation ->
+                val alpha = animation.animatedValue as Float
+                paint.alpha = (alpha * 255).toInt()
+                invalidate()
+            }
+        }
+
+        fadeAnimator?.start()
+        maskAnimator?.start()
+    }
+
+    override fun unmask() {
+        fadeAnimator = ValueAnimator.ofFloat(1f, 0f).apply {
+            duration = 300
+            addUpdateListener { animation ->
+                val alpha = animation.animatedValue as Float
+                paint.alpha = (alpha * 255).toInt()
+                invalidate()
+                if (alpha == 0f) {
+                    isMasked = false
+                    maskAnimator?.cancel()
+                    maskAnimator = null
+                    paint.shader = null
+                }
+            }
             start()
         }
     }
 
-    override fun unmask() {
-        isMasked = false
-        animator?.cancel()
-        animator = null
-        paint.shader = null
-        invalidate()
-    }
-
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        animator?.cancel()
+        maskAnimator?.cancel()
     }
 }
 
